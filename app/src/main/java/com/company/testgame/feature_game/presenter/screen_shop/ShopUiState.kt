@@ -1,6 +1,6 @@
 package com.company.testgame.feature_game.presenter.screen_shop
 
-import com.company.testgame.feature_game.domain.model.Skin
+import com.company.testgame.feature_game.domain.model.skin.Skin
 
 data class ShopUiState(
     val rocketSkinsList: List<Skin> = emptyList(),

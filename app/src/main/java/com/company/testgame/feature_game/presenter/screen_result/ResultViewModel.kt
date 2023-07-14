@@ -1,15 +1,12 @@
-package com.company.testgame.feature_game.presenter.screen_settings
+package com.company.testgame.feature_game.presenter.screen_result
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.testgame.feature_game.data.AchievementRepository
-import com.company.testgame.feature_game.data.SettingsRepository
-import com.company.testgame.feature_game.domain.model.Difficulty
 import com.company.testgame.feature_game.domain.model.SkinRepository
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,14 +16,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
+class ResultViewModel@Inject constructor(
     private val skinRepository: SkinRepository,
     private val achievementRepository: AchievementRepository
 ): ViewModel() {
-
-    private var _difficulty = MutableStateFlow<Difficulty>(Difficulty.Medium)
-    val difficulty = _difficulty.asStateFlow()
 
     private var _achievements = MutableStateFlow(PlayerAchievements.Dummy)
     val achievements = _achievements.asStateFlow()
@@ -35,8 +28,6 @@ class SettingsViewModel @Inject constructor(
     val backgroundSkin = _backgroundSkin.asStateFlow()
 
     init {
-        getDifficulty()
-
         viewModelScope.launch {
             skinRepository.getBackgroundSkins().collect { skins ->
                 _backgroundSkin.value = skins.find { it.selected } ?: return@collect
@@ -61,20 +52,6 @@ class SettingsViewModel @Inject constructor(
                         true
                     }
             }
-        }
-    }
-
-    fun setDifficulty(value: Difficulty) {
-        _difficulty.value = value
-
-        viewModelScope.launch {
-            settingsRepository.saveDifficulty(difficulty.value)
-        }
-    }
-
-    private fun getDifficulty() {
-        viewModelScope.launch {
-            _difficulty.value = settingsRepository.getDifficulty()
         }
     }
 }

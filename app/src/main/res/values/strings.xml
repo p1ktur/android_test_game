@@ -14,4 +14,11 @@
     <string name="obstacle_skins">Obstacle skins</string>
     <string name="bonus_skins">Bonus skins</string>
     <string name="background_skins">Background skins</string>
+    <string name="purchase_for">Purchase for</string>
+    <string name="purchase_this_skin">Purchase this skin?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="total_distance_flied">Total distance flied:</string>
+    <string name="total_score_gained">Total score gained:</string>
+    <string name="records">Records</string>
 </resources>

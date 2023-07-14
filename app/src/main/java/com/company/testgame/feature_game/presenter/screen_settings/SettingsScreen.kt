@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.company.testgame.R
 import com.company.testgame.components.MenuButton
+import com.company.testgame.components.SmartImage
 import com.company.testgame.feature_game.domain.model.Difficulty
 import com.company.testgame.ui.theme.TestGameTheme
 import kotlin.math.roundToInt
@@ -49,20 +50,43 @@ fun SettingsScreen(
     val interButtonsSpace = 32.dp
 
     val difficulty = settingsViewModel.difficulty.collectAsState()
+    val backgroundSkin = settingsViewModel.backgroundSkin.collectAsState()
+    val playerAchievements = settingsViewModel.achievements.collectAsState()
 
     Box(modifier = modifier) {
-        Image(
-            bitmap = ImageBitmap.imageResource(id = R.drawable.back_main),
-            contentScale = ContentScale.FillHeight,
-            contentDescription = "Background",
-            modifier = Modifier.fillMaxSize()
+        SmartImage(
+            modifier = Modifier.fillMaxSize(),
+            skin = backgroundSkin.value,
+            scale = ContentScale.FillHeight
         )
         Spacer(modifier = Modifier.height(24.dp))
         Column(
             modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Column(
+                modifier = Modifier.padding(vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(id = R.string.records),
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(interButtonsSpace))
+                Text(
+                    text = stringResource(R.string.total_distance_flied) + " ${playerAchievements.value.totalDistanceFlied}",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(interButtonsSpace))
+                Text(
+                    text = stringResource(R.string.total_score_gained) + " ${playerAchievements.value.totalScoreGained}",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.height(interButtonsSpace * 4))
             Text(
                 text = stringResource(id = R.string.settings),
                 style = MaterialTheme.typography.headlineLarge,

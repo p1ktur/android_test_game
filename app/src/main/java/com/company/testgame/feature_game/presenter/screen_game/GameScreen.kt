@@ -1,9 +1,11 @@
 package com.company.testgame.feature_game.presenter.screen_game
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +29,23 @@ fun GameScreen(
     })
 
     val gameScreenUiLogic = GameScreenUiLogic(rootActivity, binding, gameViewModel, randomInstance, navController)
+
+    val rocketSkin = gameViewModel.rocketSkin.collectAsState()
+    val obstacleSkin = gameViewModel.obstacleSkin.collectAsState()
+    val bonusSkin = gameViewModel.bonusSkin.collectAsState()
+
+    LaunchedEffect(key1 = rocketSkin.value) {
+        gameScreenUiLogic.setRocketSkin(rocketSkin.value)
+    }
+
+    LaunchedEffect(key1 = obstacleSkin.value) {
+        gameScreenUiLogic.setObstacleSkin(obstacleSkin.value)
+    }
+
+    LaunchedEffect(key1 = bonusSkin.value) {
+        Log.d("TAG", "STAR ${bonusSkin.value}")
+        gameScreenUiLogic.setBonusSkin(bonusSkin.value)
+    }
 
     LaunchedEffect(key1 = gameViewModel.eventFlow) {
         gameViewModel.eventFlow.collect { event ->

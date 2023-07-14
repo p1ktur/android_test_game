@@ -1,5 +1,6 @@
-package com.company.testgame.feature_game.presenter.screen_shop
+package com.company.testgame.feature_game.domain.model
 
+//TODO get rid or change it
 sealed class ShopItem(val shopKey: String) {
     object RocketSkin: ShopItem("rocket")
     object ObstacleSkin: ShopItem("obstacle")

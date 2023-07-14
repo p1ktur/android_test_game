@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -23,10 +24,12 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.company.testgame.R
 import com.company.testgame.components.MenuButton
+import com.company.testgame.components.SmartImage
 import com.company.testgame.feature_game.presenter.screen_menu.components.ShopButton
 import com.company.testgame.feature_game.presenter.util.Screen
 import com.company.testgame.ui.theme.TestGameTheme
@@ -35,23 +38,29 @@ import com.company.testgame.ui.theme.TestGameTheme
 fun MenuScreen(
     modifier: Modifier = Modifier,
     rootActivity: Activity,
-    navController: NavController
+    navController: NavController,
+    menuViewModel: MenuViewModel = hiltViewModel()
 ) {
     val menuButtonsWidth = 200.dp
     val menuButtonsHeight = 44.dp
 
     val interButtonsSpace = 32.dp
 
+    val backgroundSkin = menuViewModel.backgroundSkin.collectAsState()
+
     Box(modifier = modifier) {
-        Image(
-            bitmap = ImageBitmap.imageResource(id = R.drawable.back_main),
-            contentScale = ContentScale.FillHeight,
-            contentDescription = "Background",
-            modifier = Modifier.fillMaxSize()
+        SmartImage(
+            modifier = Modifier.fillMaxSize(),
+            skin = backgroundSkin.value,
+            scale = ContentScale.FillHeight
         )
-        Box(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)) {
             ShopButton(
-                modifier = Modifier.align(Alignment.TopEnd).size(48.dp, 48.dp)
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(48.dp, 48.dp)
             ) {
                 navController.navigate(Screen.ShopScreen.route)
             }

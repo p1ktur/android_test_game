@@ -1,23 +1,34 @@
 package com.company.testgame.feature_game.presenter.screen_game.gamelogic
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
+import coil.ImageLoader
+import coil.load
+import coil.request.ImageRequest
 import com.company.testgame.R
 import com.company.testgame.databinding.GameLayoutBinding
+import com.company.testgame.feature_game.domain.model.skin.Skin
 import com.company.testgame.feature_game.presenter.screen_game.*
 import com.company.testgame.util.click
 import com.company.testgame.util.fadeIn
 import com.company.testgame.util.fadeOut
 import com.company.testgame.util.float
 import com.company.testgame.util.moveDown
+import com.company.testgame.util.moveGemAway
+import com.company.testgame.util.showGemTextView
 import com.company.testgame.util.starsFadeIn
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.withContext
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -26,7 +37,7 @@ import kotlin.random.Random
 //TODO fix images not displaying????
 @SuppressLint("ClickableViewAccessibility")
 class GameScreenUiLogic(
-    rootActivity: ComponentActivity,
+    private val rootActivity: ComponentActivity,
     private val binding: GameLayoutBinding,
     private val gameViewModel: GameViewModel,
     private val randomInstance: Random,
@@ -38,12 +49,17 @@ class GameScreenUiLogic(
 
     private var gameObjectsQueue = mutableListOf<GameObject>()
 
+    private lateinit var obstacleDrawable: Drawable
+    private lateinit var bonusDrawable: Drawable
+
     init {
         binding.run {
             scoreTextView.text = gameViewModel.score.value.toString()
             livesTextView.text = gameViewModel.lives.value.toString()
+            gemTextView.text = gameViewModel.achievements.value.playerGems.toString()
 
             exitImageButton.setOnClickListener {
+                gameViewModel.stopGame()
                 navController.navigateUp()
             }
 
@@ -83,12 +99,14 @@ class GameScreenUiLogic(
 
                 livesTextView.fadeIn()
                 livesImageView.fadeIn()
+                livesImageView.setImageResource(R.drawable.heart)
                 scoreTextView.fadeIn()
                 scoreImageView.fadeIn()
+                scoreImageView.setImageResource(R.drawable.star)
                 starsImageView.starsFadeIn()
                 landingPadImageView.moveDown()
 
-                rocketImageView.setImageResource(R.drawable.rocket_fly)
+//                rocketImageView.setImageResource(R.drawable.rocket_fly)
 
                 startGame()
             }
@@ -103,32 +121,43 @@ class GameScreenUiLogic(
     @SuppressLint("InflateParams")
     fun spawnGameObject() {
         val randomNumber = randomInstance.nextInt(0, 101)
-        val view = if (randomNumber > 35) {
-            layoutInflater.inflate(R.layout.obstacle_layout, null)
-        } else {
-            layoutInflater.inflate(R.layout.bonus_layout, null)
+        val view = when(randomNumber) {
+            in 0..8 -> layoutInflater.inflate(R.layout.gem_layout, null)
+            in 9..40 -> {
+                val v = layoutInflater.inflate(R.layout.bonus_layout, null)
+                if (this::bonusDrawable.isInitialized) v.findViewById<ImageView>(R.id.bonusImageView).setImageDrawable(bonusDrawable)
+                v
+            }
+            else -> {
+                val v = layoutInflater.inflate(R.layout.obstacle_layout, null)
+                if (this::obstacleDrawable.isInitialized) v.findViewById<ImageView>(R.id.obstacleImageView).setImageDrawable(obstacleDrawable)
+                v
+            }
         }
         view.id = View.generateViewId()
         binding.rootLayout.addView(view, 0)
-
-        val set = ConstraintSet()
 
         var horizontalBias = evaluateRandomBias()
         if (gameObjectsQueue.isNotEmpty()) while (gameObjectsQueue.map { it.bias }.contains(horizontalBias)) {
             horizontalBias = evaluateRandomBias()
         }
 
-        set.clone(binding.rootLayout)
-        set.connect(view.id, ConstraintSet.BOTTOM, binding.rootLayout.id, ConstraintSet.TOP, 0)
-        set.connect(view.id, ConstraintSet.LEFT, binding.rootLayout.id, ConstraintSet.LEFT, 0)
-        set.connect(view.id, ConstraintSet.RIGHT, binding.rootLayout.id, ConstraintSet.RIGHT, 0)
-        set.setHorizontalBias(view.id, horizontalBias)
-        set.applyTo(binding.rootLayout)
+        ConstraintSet().apply {
+            clone(binding.rootLayout)
+            connect(view.id, ConstraintSet.BOTTOM, binding.rootLayout.id, ConstraintSet.TOP, 0)
+            connect(view.id, ConstraintSet.LEFT, binding.rootLayout.id, ConstraintSet.LEFT, 0)
+            connect(view.id, ConstraintSet.RIGHT, binding.rootLayout.id, ConstraintSet.RIGHT, 0)
+            setHorizontalBias(view.id, horizontalBias)
+            applyTo(binding.rootLayout)
+        }
 
-        gameObjectsQueue.add(if (randomNumber > 35 ) GameObject.Obstacle(
-            view,
-            horizontalBias
-        ) else GameObject.Bonus(view, horizontalBias))
+        gameObjectsQueue.add(
+            when(randomNumber) {
+                in 0..10 -> GameObject.Gem(view, horizontalBias)
+                in 11..40 -> GameObject.Bonus(view, horizontalBias)
+                else -> GameObject.Obstacle(view, horizontalBias)
+            }
+        )
     }
 
     //TODO optimize
@@ -146,14 +175,28 @@ class GameScreenUiLogic(
 
                 if (binding.rocketImageView.containsWithTranslation(view)) {
                     withContext(Dispatchers.Main) {
-                        if (gameObjectsQueue[i] is GameObject.Bonus) {
-                            val score = gameViewModel.score.value + 1
-                            gameViewModel.setScore(score)
-                            binding.scoreTextView.text = score.toString()
-                        } else {
-                            decreaseLives()
+                        when (gameObjectsQueue[i]) {
+                            is GameObject.Obstacle -> {
+                                decreaseLives()
+                                destroyGameObject(i)
+                            }
+                            is GameObject.Bonus -> {
+                                val score = gameViewModel.score.value + 1
+                                gameViewModel.setScore(score)
+                                binding.scoreTextView.text = score.toString()
+                                destroyGameObject(i)
+                            }
+                            is GameObject.Gem -> {
+                                val gameObjectView = gameObjectsQueue[i].view
+                                gameObjectsQueue.removeAt(i)
+                                binding.gemTextView.showGemTextView()
+                                gameObjectView.moveGemAway(binding.gemTextView) {
+                                    binding.rootLayout.removeView(gameObjectView)
+                                }
+                                gameViewModel.addGems()
+                                binding.gemTextView.text = gameViewModel.achievements.value.playerGems.toString()
+                            }
                         }
-                        destroyGameObject(i)
                     }
                 } else if (view.translationY >= displayMetrics.heightPixels * 1.05 + 96 * displayMetrics.density) {
                     withContext(Dispatchers.Main) {
@@ -197,7 +240,7 @@ class GameScreenUiLogic(
         binding.livesTextView.text = lives.toString()
 
         if (lives <= 0) {
-            gameViewModel.stopGame(navController)
+            gameViewModel.stopGameWithNavigating(navController)
         }
     }
 
@@ -215,5 +258,40 @@ class GameScreenUiLogic(
         val biasList = listOf(0.10f, 0.26f, 0.42f, 0.58f, 0.74f, 0.9f)
         val number = (0..5).shuffled().random()
         return biasList[number]
+    }
+
+    suspend fun setRocketSkin(skin: Skin) {
+        withContext(Dispatchers.Main) {
+            if (skin.locallyStored) {
+                binding.rocketImageView.setImageResource(skin.imageUrl.toInt())
+            } else {
+                binding.rocketImageView.load(skin.imageUrl)
+            }
+        }
+    }
+
+    //TODO fix so images load properly (always)
+    suspend fun setObstacleSkin(skin: Skin) {
+        obstacleDrawable = if (skin.locallyStored) {
+            ResourcesCompat.getDrawable(rootActivity.resources, skin.imageUrl.toInt(), null) ?: return
+        } else {
+            ImageLoader(rootActivity).execute(
+                ImageRequest.Builder(rootActivity)
+                    .data(skin.imageUrl)
+                    .build()
+            ).drawable ?: return
+        }
+    }
+
+    suspend fun setBonusSkin(skin: Skin) {
+        bonusDrawable = if (skin.locallyStored) {
+            ResourcesCompat.getDrawable(rootActivity.resources, skin.imageUrl.toInt(), null) ?: return
+        } else {
+            ImageLoader(rootActivity).execute(
+                ImageRequest.Builder(rootActivity)
+                    .data(skin.imageUrl)
+                    .build()
+            ).drawable ?: return
+        }
     }
 }

@@ -75,3 +75,26 @@ fun View.moveDown() {
         translationYBy(500f)
     }
 }
+
+fun View.showGemTextView() {
+    animate().apply {
+        duration = 400
+        translationYBy(height * 7f / 6)
+    }.withEndAction {
+        animate().apply {
+            duration = 1200
+            translationYBy(-height * 7f / 6)
+        }
+    }
+}
+
+fun View.moveGemAway(gemTextView: View, onAnimationEnd: () -> Unit) {
+    animate().apply {
+        duration = 800
+        scaleX(0.4f)
+        scaleY(0.4f)
+        alpha(0.0f)
+        translationXBy(gemTextView.x - x)
+        translationYBy(gemTextView.y - y)
+    }.withEndAction(onAnimationEnd)
+}

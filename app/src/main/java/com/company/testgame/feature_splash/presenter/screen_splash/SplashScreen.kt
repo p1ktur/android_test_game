@@ -33,6 +33,7 @@ import com.company.testgame.R
 import com.company.testgame.ui.theme.FireBrickRed
 import com.company.testgame.ui.theme.KhakiYellow
 import com.company.testgame.ui.theme.LightBlue
+import com.company.testgame.ui.theme.LightSkyBlue
 
 @Composable
 fun SplashScreen(
@@ -72,7 +73,7 @@ fun SplashScreen(
             LinearProgressIndicator(
                 progress = progressBar.value,
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.onPrimary,
+                trackColor = LightSkyBlue,
                 modifier = Modifier.fillMaxSize()
             )
         }

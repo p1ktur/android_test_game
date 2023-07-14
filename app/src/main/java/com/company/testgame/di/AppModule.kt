@@ -1,7 +1,13 @@
 package com.company.testgame.di
 
-import com.company.testgame.feature_game.data.FakeShopItemsRepositoryImpl
-import com.company.testgame.feature_game.domain.model.ShopItemsRepository
+import android.app.Application
+import androidx.room.Room
+import com.company.testgame.feature_game.data.SkinRepositoryImpl
+import com.company.testgame.feature_game.data.achievement.AchievementDao
+import com.company.testgame.feature_game.data.achievement.AchievementDatabase
+import com.company.testgame.feature_game.data.skin.SkinDao
+import com.company.testgame.feature_game.data.skin.SkinDatabase
+import com.company.testgame.feature_game.domain.model.SkinRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +28,35 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideShopItemsRepository(): ShopItemsRepository {
-        return FakeShopItemsRepositoryImpl()
+    fun provideShopItemsRepository(skinDao: SkinDao, achievementDao: AchievementDao): SkinRepository {
+        return SkinRepositoryImpl(skinDao, achievementDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAchievementDb(application: Application): AchievementDatabase {
+        return Room.databaseBuilder(application, AchievementDatabase::class.java, AchievementDatabase.ACHIEVEMENT_DB_NAME)
+            .enableMultiInstanceInvalidation()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAchievementDao(database: AchievementDatabase): AchievementDao {
+        return database.achievementDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideSkinDb(application: Application): SkinDatabase {
+        return Room.databaseBuilder(application, SkinDatabase::class.java, SkinDatabase.SKIN_DB_NAME)
+            .enableMultiInstanceInvalidation()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSkinDao(database: SkinDatabase): SkinDao {
+        return database.skinDao
     }
 }
