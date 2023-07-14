@@ -1,8 +1,8 @@
-package com.company.testgame.feature_game.data
+package com.company.testgame.feature_game.data.repository
 
 import com.company.testgame.R
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import com.company.testgame.feature_game.domain.model.ShopItem
 import com.company.testgame.feature_game.domain.model.skin.SkinUnlockCondition

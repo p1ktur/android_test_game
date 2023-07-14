@@ -1,5 +1,6 @@
-package com.company.testgame.feature_game.data
+package com.company.testgame.feature_game.data.repository
 
+import com.company.testgame.feature_game.data.GameSharedPreferences
 import com.company.testgame.feature_game.domain.model.Difficulty
 import javax.inject.Inject
 import javax.inject.Singleton

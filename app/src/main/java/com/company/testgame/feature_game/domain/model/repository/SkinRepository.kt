@@ -1,4 +1,4 @@
-package com.company.testgame.feature_game.domain.model
+package com.company.testgame.feature_game.domain.model.repository
 
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
 import com.company.testgame.feature_game.domain.model.skin.Skin

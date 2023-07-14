@@ -1,9 +1,9 @@
-package com.company.testgame.feature_game.data
+package com.company.testgame.feature_game.data.repository
 
 import com.company.testgame.feature_game.data.achievement.AchievementDao
 import com.company.testgame.feature_game.data.skin.SkinDao
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

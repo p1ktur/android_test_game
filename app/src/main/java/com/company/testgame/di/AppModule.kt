@@ -2,12 +2,12 @@ package com.company.testgame.di
 
 import android.app.Application
 import androidx.room.Room
-import com.company.testgame.feature_game.data.SkinRepositoryImpl
+import com.company.testgame.feature_game.data.repository.SkinRepositoryImpl
 import com.company.testgame.feature_game.data.achievement.AchievementDao
 import com.company.testgame.feature_game.data.achievement.AchievementDatabase
 import com.company.testgame.feature_game.data.skin.SkinDao
 import com.company.testgame.feature_game.data.skin.SkinDatabase
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

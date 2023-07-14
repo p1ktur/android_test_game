@@ -1,4 +1,4 @@
-package com.company.testgame.feature_game.data
+package com.company.testgame.feature_game.data.repository
 
 import com.company.testgame.feature_game.data.achievement.AchievementDao
 import com.company.testgame.feature_game.domain.model.Difficulty

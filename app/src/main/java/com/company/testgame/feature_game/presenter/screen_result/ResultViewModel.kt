@@ -2,8 +2,8 @@ package com.company.testgame.feature_game.presenter.screen_result
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.testgame.feature_game.data.AchievementRepository
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.data.repository.AchievementRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import dagger.hilt.android.lifecycle.HiltViewModel

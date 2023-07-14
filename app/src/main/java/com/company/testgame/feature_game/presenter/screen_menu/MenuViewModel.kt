@@ -2,7 +2,7 @@ package com.company.testgame.feature_game.presenter.screen_menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

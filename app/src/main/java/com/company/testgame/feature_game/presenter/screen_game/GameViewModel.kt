@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.company.testgame.R
-import com.company.testgame.feature_game.data.AchievementRepository
-import com.company.testgame.feature_game.data.SettingsRepository
+import com.company.testgame.feature_game.data.repository.AchievementRepository
+import com.company.testgame.feature_game.data.repository.SettingsRepository
 import com.company.testgame.feature_game.domain.model.Difficulty
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import com.company.testgame.feature_game.presenter.util.Screen

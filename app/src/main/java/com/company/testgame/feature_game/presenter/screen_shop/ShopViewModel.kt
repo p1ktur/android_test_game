@@ -3,11 +3,10 @@ package com.company.testgame.feature_game.presenter.screen_shop
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.testgame.feature_game.data.FakeSkinRepositoryImpl
-import com.company.testgame.feature_game.data.skin.SkinDatabase
+import com.company.testgame.feature_game.data.repository.FakeSkinRepositoryImpl
 import com.company.testgame.feature_game.domain.model.ShopItem
 import com.company.testgame.feature_game.domain.model.achievement.PlayerAchievements
-import com.company.testgame.feature_game.domain.model.SkinRepository
+import com.company.testgame.feature_game.domain.model.repository.SkinRepository
 import com.company.testgame.feature_game.domain.model.achievement.AchievementRequirement
 import com.company.testgame.feature_game.domain.model.skin.Skin
 import com.company.testgame.feature_game.domain.model.skin.SkinUnlockCondition
