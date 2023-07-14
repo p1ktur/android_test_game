@@ -23,8 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShopViewModel @Inject constructor(
-    private val skinRepository: SkinRepository,
-    private val skinDatabase: SkinDatabase
+    private val skinRepository: SkinRepository
 ): ViewModel() {
 
     private var _achievements = MutableStateFlow(PlayerAchievements.Dummy)
@@ -38,11 +37,8 @@ class ShopViewModel @Inject constructor(
     private var _backgroundSkin = MutableStateFlow(Skin.Dummy)
     val backgroundSkin = _backgroundSkin.asStateFlow()
 
-    //TODO unlock some when conditions are met
     val state = combine(_rocketSkins, _obstacleSkins, _bonusSkins, _backgroundSkins, _achievements) {
             rocketSkins, obstacleSkins, bonusSkins, backgroundSkins, achievements ->
-        Log.d("TAG", "$rocketSkins")
-        Log.d("TAG", "$achievements")
         ShopUiState(
             rocketSkins.mapSkinsWithAchievements(),
             obstacleSkins.mapSkinsWithAchievements(),
@@ -61,11 +57,6 @@ class ShopViewModel @Inject constructor(
     val requirementDialogShown = _requirementDialogShown.asStateFlow()
 
     init {
-//        viewModelScope.launch {
-//            withContext(Dispatchers.IO) {
-//                skinDatabase.clearAllTables()
-//            }
-//        }
         getAllSkins()
         getAchievements()
     }

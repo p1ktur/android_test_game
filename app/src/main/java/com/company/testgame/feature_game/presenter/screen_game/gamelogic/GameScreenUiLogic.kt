@@ -34,7 +34,6 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-//TODO fix images not displaying????
 @SuppressLint("ClickableViewAccessibility")
 class GameScreenUiLogic(
     private val rootActivity: ComponentActivity,
@@ -106,8 +105,6 @@ class GameScreenUiLogic(
                 starsImageView.starsFadeIn()
                 landingPadImageView.moveDown()
 
-//                rocketImageView.setImageResource(R.drawable.rocket_fly)
-
                 startGame()
             }
             tapToPlayTextView.float()
@@ -160,8 +157,7 @@ class GameScreenUiLogic(
         )
     }
 
-    //TODO optimize
-    suspend fun moveGameObjects() {
+    fun moveGameObjects() {
         val flyCoefficient = 15000f
         val viewSpeed = displayMetrics.heightPixels / flyCoefficient * gameViewModel.frameRate
 
@@ -174,35 +170,31 @@ class GameScreenUiLogic(
                 if (view.parent == null) continue
 
                 if (binding.rocketImageView.containsWithTranslation(view)) {
-                    withContext(Dispatchers.Main) {
-                        when (gameObjectsQueue[i]) {
-                            is GameObject.Obstacle -> {
-                                decreaseLives()
-                                destroyGameObject(i)
+                    when (gameObjectsQueue[i]) {
+                        is GameObject.Obstacle -> {
+                            decreaseLives()
+                            destroyGameObject(i)
+                        }
+                        is GameObject.Bonus -> {
+                            val score = gameViewModel.score.value + 1
+                            gameViewModel.setScore(score)
+                            binding.scoreTextView.text = score.toString()
+                            destroyGameObject(i)
+                        }
+                        is GameObject.Gem -> {
+                            val gameObjectView = gameObjectsQueue[i].view
+                            gameObjectsQueue.removeAt(i)
+                            binding.gemTextView.showGemTextView()
+                            gameObjectView.moveGemAway(binding.gemTextView) {
+                                binding.rootLayout.removeView(gameObjectView)
                             }
-                            is GameObject.Bonus -> {
-                                val score = gameViewModel.score.value + 1
-                                gameViewModel.setScore(score)
-                                binding.scoreTextView.text = score.toString()
-                                destroyGameObject(i)
-                            }
-                            is GameObject.Gem -> {
-                                val gameObjectView = gameObjectsQueue[i].view
-                                gameObjectsQueue.removeAt(i)
-                                binding.gemTextView.showGemTextView()
-                                gameObjectView.moveGemAway(binding.gemTextView) {
-                                    binding.rootLayout.removeView(gameObjectView)
-                                }
-                                gameViewModel.addGems()
-                                binding.gemTextView.text = gameViewModel.achievements.value.playerGems.toString()
-                            }
+                            gameViewModel.addGems()
+                            binding.gemTextView.text = gameViewModel.achievements.value.playerGems.toString()
                         }
                     }
                 } else if (view.translationY >= displayMetrics.heightPixels * 1.05 + 96 * displayMetrics.density) {
-                    withContext(Dispatchers.Main) {
-                        binding.rootLayout.removeView(view)
-                        gameObjectsQueue = gameObjectsQueue.drop(1).toMutableList()
-                    }
+                    binding.rootLayout.removeView(view)
+                    gameObjectsQueue = gameObjectsQueue.drop(1).toMutableList()
                 }
                 i++
             }
@@ -270,7 +262,7 @@ class GameScreenUiLogic(
         }
     }
 
-    //TODO fix so images load properly (always)
+    //TODO fix so images load properly (always)????
     suspend fun setObstacleSkin(skin: Skin) {
         obstacleDrawable = if (skin.locallyStored) {
             ResourcesCompat.getDrawable(rootActivity.resources, skin.imageUrl.toInt(), null) ?: return

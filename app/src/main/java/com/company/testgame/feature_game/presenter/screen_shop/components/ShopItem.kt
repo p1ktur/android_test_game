@@ -1,6 +1,5 @@
 package com.company.testgame.feature_game.presenter.screen_shop.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,13 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.company.testgame.R
 import com.company.testgame.components.SmartImage
 import com.company.testgame.feature_game.domain.model.skin.Skin
@@ -35,8 +30,6 @@ import com.company.testgame.ui.theme.Gold
 import com.company.testgame.ui.theme.Ivory
 import com.company.testgame.ui.theme.TestGameTheme
 
-//TODO if mustBePurchased and gems are present then allow to buy by showing dialog window
-//TODO show dialog window when clicking on locked skins
 @Composable
 fun ShopItem(
     modifier: Modifier = Modifier,
