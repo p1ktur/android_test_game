@@ -1,5 +1,5 @@
 # Rocket Game
-Description: In this game you endlessly fly a rocket where sometimes you are able to collect either score or gems for which you may unlock new skins in the shop. Also in the settings you may view your records and set game difficulty. The result screen shows the result of your run where you can see amount of score collected during last run and your overall records. In the shop there are 4 categories of skins available to be unlocked and then used.
+Description: In this game you endlessly fly a rocket where sometimes you are able to collect either score or gems with which you may unlock new skins in the shop. Also in the settings you may view your records and set game difficulty. The result screen shows the result of your run where you can see amount of score collected during last run and your overall records. In the shop there are 4 categories of skins available to be unlocked and then used.
 
 In this project I used such libraries as Jetpack Compose, Coroutines, Flows, Room, Coin for downloading images, SharedPref, Dagger-Hilt for Dependency Injection. Additionally I used Activity and ViewModels. Whole project is structured and divided in 3 layers - data, domain and presenter.
 
